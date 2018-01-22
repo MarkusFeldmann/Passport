@@ -32,8 +32,22 @@ module.exports = function (app, passport) {
         req.logout();
         res.redirect('/');
     });
-}
 
+    app.get('/login365', passport.authenticate('azureoauth', {
+        failureRedirect: '/',
+        successRedirect: '/profile'
+    }));
+
+    app.get('/auth/azureOAuth/callback', passport.authenticate('azureoauth', { 
+        failureRedirect: '/' 
+    }),
+    function (req, res) {
+        console.dir(passport.user.accessToken);
+        res.redirect('/profile');
+    });
+
+}
+    
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated())
         return next();

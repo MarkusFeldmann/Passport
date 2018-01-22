@@ -10,3 +10,6 @@ Learn Passport
 # Express Passport Error Handling
 # https://stackoverflow.com/questions/15711127/express-passport-node-js-error-handling
 
+# Passport AzureAD STrategy
+# https://github.com/AzureAD/passport-azure-ad
+

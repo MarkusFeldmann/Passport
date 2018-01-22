@@ -1,7 +1,11 @@
+//import { token } from '../../../../AppData/Local/Microsoft/TypeScript/2.6/node_modules/@types/morgan';
+
 // configure passport
 
-var LocalStrategy = require('passport-local').Strategy;
+var AzureOAuthStrategy = require('passport-azure-oauth').Strategy;
+var appSettings = require('./appSettings.js');
 
+var LocalStrategy = require('passport-local').Strategy;
 var User = require('../app/models/user');
 
 module.exports = function (passport) {
@@ -76,4 +80,86 @@ module.exports = function (passport) {
                 return done(null, user);
             });
         }));
+
+    passport.use('azureoauth', new AzureOAuthStrategy(
+        appSettings.oauthOptions,
+        function Verify(accessToken, refreshToken, params, profile, next){
+            validate({
+                'accessToken': accessToken,
+                'refreshToken': refreshToken,
+                'tokenParams': params,
+                'userProfile': profile
+            },
+            function(err, user){
+                passport.user = null;
+                if(err)
+                    return next(err);
+                if(user) {
+                   
+                passport.user = user;
+                return next(null, user);
+                }
+            });
+        })
+    );
+
+    validate = function(result, next) {
+        if (!result) {
+            return next('invalid user');
+        } else if (!result.accessToken) {
+            return next('invalid credentials');
+        } else {
+            User.findOne({ 'o365.email': result.userProfile.displayname }, function (err, user) {
+                if(err)
+                    return next(err);
+                
+                    if(!user)
+                        {
+                            var newUser = new User();
+                            newUser.o365.displayName = result.userProfile.displayname;
+                            newUser.o365.email = result.userProfile.username;
+                            newUser.o365.accessToken = result.accessToken;
+                            newUser.o365.refreshToken = result.refreshToken;
+                            result.tokenParams.refresh_token = result.refreshToken;
+
+                            newUser.save(function (err) {
+                                if (err)
+                                    throw err;
+                                return next(null, newUser);
+                            });
+
+                        }
+                        else
+                        {
+                            return next(null, user);
+                        }
+                    });
+            }
+    };
+
+    passport.getAccessToken = function(resource, req, res, next) {
+        if (passport.user.hasToken(resource)) {
+            return next();
+        } else {
+            var data = 'grant_type=refresh_token' 
+            + '&refresh_token=' + passport.user.refresh_token 
+            + '&client_id=' + appSettings.oauthOptions.clientId 
+            + '&client_secret=' + encodeURIComponent(appSettings.oauthOptions.clientSecret) 
+            + '&resource=' + encodeURIComponent(resource);
+            var opts = {
+                url: appSettings.apiEndpoints.accessTokenRequestUrl,
+                body: data,
+                headers : { 'Content-Type' : 'application/x-www-form-urlencoded' }
+            };
+            require('request').post(opts, function (err, response, body) {
+                if (err) {
+                    return next(err)
+                } else {
+                    var token = JSON.parse(body);
+                    passport.user.setToken(token);
+                    return next();
+                }
+            })
+        }
+    }
 }

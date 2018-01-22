@@ -40,6 +40,28 @@
 				</div>
 			</div>
 		</div>
+		<div class="row">
+			<!-- LOCAL INFORMATION -->
+			<div class="col-sm-6">
+				<div class="well">
+					<h3>
+						<span class="fa fa-user"></span> O365 Token</h3>
+					<p>
+						<strong>id</strong>:
+						<%= user._id %>
+						<br>
+						<strong>email</strong>:
+						<%= user.o365.email %>
+						<br>
+						<strong>Display Name</strong>:
+						<%= user.o365.displayName %>
+						<br>
+						<strong>Access Token</strong>:
+						<%= user.o365.accessToken %>
+					</p>
+				</div>
+			</div>
+		</div>
 	</div>
 </body>
 

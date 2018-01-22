@@ -24,6 +24,15 @@ var userSchema = mongoose.Schema({
         email: String,
         name: String
 
+    },
+    o365: {
+        id: String,
+        accessToken: String,
+        refreshToken: String,
+        email: String,
+        name: String,
+        tokenParams: String,
+        displayName: String
     }
 });
 
@@ -33,6 +42,14 @@ userSchema.methods.generateHash = function(password){
 
 userSchema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.local.password);
+};
+
+userSchema.methods.hasToken = function(resourceUri) {
+    if (user.tokens.hasOwnProperty(resourceUri)) {
+        return true;
+    } else {
+        return false;
+    }
 };
 
 module.exports = mongoose.model('User', userSchema);
