@@ -1,5 +1,3 @@
-//import { token } from '../../../../AppData/Local/Microsoft/TypeScript/2.6/node_modules/@types/morgan';
-
 // configure passport
 
 var AzureOAuthStrategy = require('passport-azure-oauth').Strategy;
@@ -109,7 +107,7 @@ module.exports = function (passport) {
         } else if (!result.accessToken) {
             return next('invalid credentials');
         } else {
-            User.findOne({ 'o365.email': result.userProfile.displayname }, function (err, user) {
+            User.findOne({ 'o365.email': result.userProfile.username }, function (err, user) {
                 if(err)
                     return next(err);
                 
