@@ -26,3 +26,28 @@ Learn Passport
 $d = New-Object System.DateTime(1970, 1, 1, 0, 0, 0, 0 )
 $d.AddSeconds(1516884006)
 
+# Bearer Strategy Sample (Does not Work)
+# https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-devquickstarts-webapi-nodejs
+
+# Example OIDCStrategy
+# https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-devquickstarts-node-web
+
+
+
+# FORGET ALL About passport-azure-ad, According to MS only use MSAL.JS
+# https://docs.microsoft.com/en-us/azure/active-directory/develop/guidedsetups/active-directory-javascriptspa
+
+# The MSAL Library
+# https://github.com/AzureAD/microsoft-authentication-library-for-js
+
+# Video
+# https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-appmodel-v2-overview
+
+# Dev Guide
+# http://aka.ms/aadv2
+# https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-appmodel-v2-overview
+# Register v2 apps here:
+# http://apps.dev.microsoft.com
+
+# NodeJs Express and Passport Session Management Deep Dive
+# https://www.airpair.com/express/posts/expressjs-and-passportjs-sessions-deep-dive
